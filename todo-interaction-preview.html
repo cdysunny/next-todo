@@ -1,0 +1,230 @@
+<div id="todo-motion-preview" class="viz-dotted-background">
+  <div class="tm-app">
+    <header class="tm-head"><span class="tm-mark" aria-hidden="true">✓</span><span>先做哪件事</span><span class="tm-edition">个人待办</span></header>
+    <div class="tm-shell">
+      <main class="tm-main">
+        <div class="tm-kicker">我的清单</div><h1>先做哪件事？</h1>
+        <form class="tm-quick"><input name="quick" aria-label="新任务标题" placeholder="记一件事…" maxlength="120" required><button class="tm-primary">＋ 添加</button></form>
+        <div class="tm-tabs" aria-label="任务视图"><button type="button" data-tab="pending" aria-pressed="true">待办 <span data-count="pending"></span></button><button type="button" data-tab="done" aria-pressed="false">已完成 <span data-count="done"></span></button></div>
+        <div class="tm-filter" hidden><span></span><button type="button" class="tm-link" data-clear>清除筛选</button></div>
+        <div class="tm-list"></div>
+      </main>
+      <aside class="tm-overview">
+        <h2>待办概览</h2><details open><summary>待办概览 <span class="tm-chevron" aria-hidden="true">⌄</span></summary>
+          <div class="tm-stat"><div class="tm-ring" aria-hidden="true"></div><div class="tm-total"><strong></strong><span>件待办</span></div></div>
+          <div class="tm-legend"></div>
+        </details>
+      </aside>
+    </div>
+    <div class="tm-toast"><span role="status"></span><button type="button" data-undo hidden>撤销</button></div>
+    <dialog class="tm-editor" aria-labelledby="tm-editor-title">
+      <form class="tm-edit"><header><h2 id="tm-editor-title">编辑任务</h2><button type="button" class="tm-cancel" data-close>关闭</button></header>
+        <label>任务名称<input name="title" maxlength="120" required></label>
+        <label class="tm-switch"><input type="checkbox" name="important"> 标为重要</label>
+        <label>截止时间<input type="datetime-local" name="due"></label>
+        <label>备注<textarea name="notes" rows="3" maxlength="2000"></textarea></label>
+        <footer><button type="button" class="tm-cancel" data-close>取消</button><button class="tm-primary">保存</button></footer>
+      </form>
+    </dialog>
+  </div>
+</div>
+<style>
+#todo-motion-preview { padding: clamp(0px, 2vw, 18px); }
+#todo-motion-preview .tm-app { color-scheme:light dark; --paper:light-dark(#f7f6f0,#1c201d); --surface:light-dark(#fffefa,#262c27); --ink:light-dark(#202d26,#edf2e9); --muted:light-dark(#59655d,#aab9ac); --border:light-dark(#dddcd2,#3c493e); --green:light-dark(#215640,#a8d5b7); --on-green:light-dark(#fffefa,#172a20); --tint:light-dark(#e7efe7,#303f34); --rust:light-dark(#903b2f,#f3a394); --rose:light-dark(#f8e8e2,#4d312c); --g0:light-dark(#ac5848,#e39181); --g1:light-dark(#b98746,#e1b171); --g2:light-dark(#59846c,#95bfab); --g3:light-dark(#859089,#798b80); --ease:cubic-bezier(.2,.8,.2,1); --speed:1; background:var(--paper); color:var(--ink); border:1px solid var(--border); border-radius:20px; position:relative; font:14px/1.45 system-ui,"Microsoft YaHei",sans-serif; }
+#todo-motion-preview * { box-sizing:border-box; }
+#todo-motion-preview [hidden] { display:none !important; }
+#todo-motion-preview h1,#todo-motion-preview h2,#todo-motion-preview p { margin:0; }
+#todo-motion-preview button,#todo-motion-preview input,#todo-motion-preview textarea { font:inherit; }
+#todo-motion-preview button { cursor:pointer; color:inherit; }
+#todo-motion-preview :focus-visible { outline:2px solid var(--green); outline-offset:3px; }
+#todo-motion-preview .tm-head { display:flex; align-items:center; gap:10px; padding:13px clamp(12px,3vw,30px); border-bottom:1px solid var(--border); font-weight:650; }
+#todo-motion-preview .tm-mark { display:grid; place-items:center; background:var(--green); color:var(--on-green); inline-size:26px; block-size:26px; border-radius:8px; }
+#todo-motion-preview .tm-edition { margin-left:auto; color:var(--muted); font-size:12px; font-weight:450; }
+#todo-motion-preview .tm-shell { display:grid; grid-template-columns:minmax(0,1fr) minmax(185px,230px); align-items:start; gap:clamp(15px,3vw,34px); padding:22px clamp(12px,3vw,30px) 8px; }
+#todo-motion-preview .tm-kicker { color:var(--green); font-size:12px; font-weight:650; margin-bottom:2px; }
+#todo-motion-preview h1 { font-size:clamp(25px,4.5vw,38px); letter-spacing:-.055em; line-height:1.2; }
+#todo-motion-preview .tm-quick { margin:15px 0 10px; display:flex; gap:8px; }
+#todo-motion-preview input:not([type=checkbox]),#todo-motion-preview textarea { min-width:0; background:var(--surface); border:1px solid var(--border); color:var(--ink); border-radius:9px; padding:9px 11px; }
+#todo-motion-preview .tm-quick input { flex:1; }
+#todo-motion-preview .tm-primary,#todo-motion-preview .tm-cancel { min-height:42px; border:1px solid var(--border); background:var(--surface); border-radius:9px; padding:0 12px; white-space:nowrap; }
+#todo-motion-preview .tm-primary { background:var(--green); border-color:var(--green); color:var(--on-green); font-weight:650; }
+#todo-motion-preview .tm-tabs { display:flex; gap:6px; margin-bottom:8px; }
+#todo-motion-preview .tm-tabs button,#todo-motion-preview .tm-link { border:0; background:transparent; min-height:40px; padding:0 10px; border-radius:8px; color:var(--muted); transition:background-color calc(120ms * var(--speed)); }
+#todo-motion-preview .tm-tabs button[aria-pressed=true] { background:var(--tint); color:var(--green); font-weight:650; }
+#todo-motion-preview .tm-tabs span { margin-left:3px; font-variant-numeric:tabular-nums; }
+#todo-motion-preview .tm-list { display:grid; gap:6px; }
+#todo-motion-preview .tm-row { background:var(--surface); border:1px solid var(--border); border-radius:11px; }
+#todo-motion-preview .tm-row[data-next] { border-inline-start:3px solid var(--green); }
+#todo-motion-preview .tm-line { display:grid; grid-template-columns:44px minmax(0,1fr); align-items:center; }
+#todo-motion-preview .tm-check { display:grid; place-items:center; width:44px; min-height:44px; border:0; background:none; }
+#todo-motion-preview .tm-check span { display:grid; place-items:center; width:17px; height:17px; border-radius:5px; border:1px solid var(--muted); color:transparent; font-size:12px; }
+#todo-motion-preview .tm-check[aria-pressed=true] span { background:var(--green); border-color:var(--green); color:var(--on-green); }
+#todo-motion-preview .tm-task { text-align:left; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:2px 8px; width:100%; min-height:49px; padding:6px 10px 6px 0; border:0; background:none; }
+#todo-motion-preview .tm-task strong { overflow-wrap:anywhere; align-self:end; font-weight:650; }
+#todo-motion-preview .tm-meta { color:var(--muted); font-size:12px; grid-column:1; }
+#todo-motion-preview .tm-late { color:var(--rust); }
+#todo-motion-preview .tm-chevron { display:inline-block; color:var(--muted); font-size:19px; transition:transform calc(160ms * var(--speed)) var(--ease); }
+#todo-motion-preview .tm-task .tm-chevron { grid-area:1 / 2 / 3 / 3; align-self:center; }
+#todo-motion-preview .tm-task[aria-expanded=true] .tm-chevron,#todo-motion-preview details[open] summary .tm-chevron { transform:rotate(180deg); }
+#todo-motion-preview .tm-fold { display:grid; grid-template-rows:0fr; opacity:0; transition:grid-template-rows calc(180ms * var(--speed)) var(--ease),opacity calc(125ms * var(--speed)); }
+#todo-motion-preview .tm-fold[data-open] { grid-template-rows:1fr; opacity:1; }
+#todo-motion-preview .tm-fold > div { overflow:hidden; min-height:0; }
+#todo-motion-preview .tm-detail { padding:5px 11px 8px 44px; color:var(--muted); overflow-wrap:anywhere; }
+#todo-motion-preview .tm-detail .tm-link { color:var(--green); padding-inline:0 12px; font-weight:650; }
+#todo-motion-preview .tm-empty { color:var(--muted); padding:13px 8px; }
+#todo-motion-preview .tm-filter { display:flex; align-items:center; justify-content:space-between; gap:6px; padding-left:8px; font-size:12px; }
+#todo-motion-preview .tm-filter .tm-link { color:var(--green); padding-inline:5px; }
+#todo-motion-preview .tm-overview { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:12px; }
+#todo-motion-preview h2 { font-size:16px; font-weight:650; }
+#todo-motion-preview summary { display:none; cursor:pointer; }
+#todo-motion-preview .tm-stat { position:relative; display:grid; place-items:center; margin:11px auto 8px; width:102px; aspect-ratio:1; }
+#todo-motion-preview .tm-ring { position:absolute; inset:0; border-radius:50%; background:conic-gradient(var(--slices,var(--border) 0 100%)); }
+#todo-motion-preview .tm-ring::after { content:""; position:absolute; inset:11px; border-radius:50%; background:var(--surface); }
+#todo-motion-preview .tm-total { position:relative; display:grid; place-items:center; color:var(--muted); font-size:11px; }
+#todo-motion-preview .tm-total strong { color:var(--ink); font-size:28px; line-height:1; font-variant-numeric:tabular-nums; }
+#todo-motion-preview .tm-legend { display:grid; gap:2px; }
+#todo-motion-preview .tm-legend button { min-height:37px; display:grid; grid-template-columns:8px minmax(0,1fr) auto; align-items:center; gap:7px; border:0; background:transparent; text-align:left; border-radius:7px; padding:5px; font-size:12px; }
+#todo-motion-preview .tm-legend button[aria-pressed=true] { background:var(--tint); font-weight:650; }
+#todo-motion-preview .tm-dot { inline-size:7px; block-size:7px; border-radius:50%; }
+#todo-motion-preview .tm-legend b { color:var(--muted); font-weight:550; white-space:nowrap; }
+#todo-motion-preview .tm-toast { min-height:46px; margin:1px clamp(12px,3vw,30px) 8px; display:flex; align-items:center; gap:8px; color:var(--green); overflow-wrap:anywhere; }
+#todo-motion-preview .tm-toast button { background:var(--tint); border:0; padding:7px 12px; border-radius:7px; flex-shrink:0; }
+#todo-motion-preview .tm-toast.tm-pop { animation:tm-note calc(150ms * var(--speed)) var(--ease); }
+#todo-motion-preview .tm-editor { position:absolute; inset:8px 8px 8px auto; width:min(345px,calc(100% - 16px)); max-height:calc(100% - 16px); margin:0; padding:0; color:var(--ink); background:var(--surface); border:1px solid var(--border); border-radius:14px; }
+#todo-motion-preview .tm-editor::backdrop { background:#18251e55; }
+#todo-motion-preview .tm-editor[open] { animation:tm-side calc(240ms * var(--speed)) var(--ease); }
+#todo-motion-preview .tm-editor[open][data-closing] { animation:tm-side calc(180ms * var(--speed)) ease-in reverse both; }
+#todo-motion-preview .tm-edit { padding:14px; display:grid; gap:8px; }
+#todo-motion-preview .tm-edit header,#todo-motion-preview .tm-edit footer { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+#todo-motion-preview .tm-edit footer { justify-content:flex-end; }
+#todo-motion-preview .tm-edit label { display:grid; gap:3px; color:var(--muted); }
+#todo-motion-preview .tm-edit .tm-switch { display:flex; align-items:center; min-height:29px; }
+#todo-motion-preview .tm-switch input { accent-color:var(--green); }
+#todo-motion-preview .tm-edit textarea { resize:vertical; }
+@keyframes tm-side { from { transform:translateX(28px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+@keyframes tm-bottom { from { transform:translateY(24px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+@keyframes tm-note { from { transform:translateY(4px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+@media(max-width:595px) {
+  #todo-motion-preview .tm-shell { display:flex; flex-direction:column; gap:10px; padding-top:15px; }
+  #todo-motion-preview .tm-main,#todo-motion-preview .tm-overview { width:100%; }
+  #todo-motion-preview .tm-overview h2 { display:none; }
+  #todo-motion-preview summary { display:flex; min-height:32px; align-items:center; justify-content:space-between; font-weight:650; }
+  #todo-motion-preview .tm-editor { inset:auto 4px 4px; width:calc(100% - 8px); }
+  #todo-motion-preview .tm-editor[open] { animation-name:tm-bottom; }
+  #todo-motion-preview .tm-editor[open][data-closing] { animation-name:tm-bottom; }
+  #todo-motion-preview input:not([type=checkbox]),#todo-motion-preview textarea { font-size:16px; }
+}
+@media(pointer:coarse) {
+  #todo-motion-preview .tm-app button,#todo-motion-preview summary { min-height:44px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #todo-motion-preview *,#todo-motion-preview *::before,#todo-motion-preview *::after { animation:none !important; transition:none !important; }
+}
+</style>
+<script>
+{
+  const root = document.getElementById('todo-motion-preview');
+  const $ = selector => root.querySelector(selector);
+  const all = selector => Array.from(root.querySelectorAll(selector));
+  const dialog = $('.tm-editor'), editor = $('.tm-edit'), quick = $('.tm-quick');
+  const groups = ['重要且紧急','紧急但普通','重要不紧急','普通不紧急'];
+  const now = Date.now();
+  const tasks = [
+    {id:1,title:'提交方案初稿',notes:'发出前，确认预算和交付日期。',important:true,due:now+4*36e5,done:false},
+    {id:2,title:'寄出退货包裹',notes:'取件码在订单详情里。',important:false,due:now-2*36e5,done:false},
+    {id:3,title:'整理下周阅读笔记',notes:'从上次标记的三篇文章开始。',important:true,due:now+3*864e5,done:false},
+    {id:4,title:'清理下载文件夹',notes:'',important:false,due:null,done:false},
+    {id:5,title:'确认会议时间',notes:'',important:false,due:null,done:true}
+  ];
+  let tab='pending', filter=null, expanded=null, editing=null, undo=null, seq=5, ready=false;
+  const group = t => t.important ? (t.due && t.due-now<=864e5 ? 0 : 2) : (t.due && t.due-now<=864e5 ? 1 : 3);
+  const fmt = new Intl.DateTimeFormat('zh-CN',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+  const elem = (tag, css, value) => { const el=document.createElement(tag); if(css) el.className=css; if(value!==undefined) el.textContent=value; return el; };
+  const btn = (css, value) => { const el=elem('button',css,value); el.type='button'; return el; };
+  const starts = ['--g0','--g1','--g2','--g3'];
+  const storage = () => { if (ready) window.openai?.setWidgetState?.({modelContent:null,privateContent:{tab,filter}})?.catch(()=>{}); };
+  const restore = s => { if (!s) return; tab=s.tab==='done'?'done':'pending'; filter=[0,1,2,3].includes(s.filter)?s.filter:null; render(); };
+  function activate(action) { if (tab==='done') tab='pending'; filter=filter===action?null:action; render(); storage(); if(filter!==null) $('[data-filter="'+filter+'"]').focus(); else $('[data-filter="'+action+'"]').focus(); }
+  function announce(message, candidate=null) {
+    undo=candidate; const toast=$('.tm-toast');
+    $('.tm-toast span').textContent=message; $('[data-undo]').hidden=!candidate;
+    toast.classList.remove('tm-pop'); void toast.offsetWidth; toast.classList.add('tm-pop');
+  }
+  function render() {
+    const open=tasks.filter(t=>!t.done).sort((a,b)=>group(a)-group(b)||(a.due??Infinity)-(b.due??Infinity)||a.id-b.id);
+    const done=tasks.filter(t=>t.done).sort((a,b)=>(b.completed||0)-(a.completed||0));
+    const counts=groups.map((_,i)=>open.filter(t=>group(t)===i).length);
+    $('[data-count="pending"]').textContent=open.length; $('[data-count="done"]').textContent=done.length;
+    all('[data-tab]').forEach(node=>node.setAttribute('aria-pressed',String(node.dataset.tab===tab)));
+    $('.tm-total strong').textContent=open.length;
+    let total=0;
+    $('.tm-ring').style.setProperty('--slices',open.length ? counts.map((n,i)=>{const first=total; total+=n*100/open.length; return `var(${starts[i]}) ${first}% ${total}%`;}).join(',') : 'var(--border) 0% 100%');
+    $('.tm-legend').replaceChildren(...groups.map((label,i)=>{
+      const el=btn('',undefined), dot=elem('span','tm-dot'); el.dataset.filter=i; dot.style.background=`var(${starts[i]})`;
+      el.setAttribute('aria-pressed',String(tab==='pending'&&i===filter)); el.append(dot,elem('span','',label),elem('b','',`${counts[i]} 件 · ${open.length?Math.round(counts[i]*100/open.length):0}%`));
+      el.addEventListener('click',()=>activate(i)); return el;
+    }));
+    $('.tm-filter').hidden=tab!=='pending'||filter===null;
+    $('.tm-filter span').textContent=filter===null?'':`正在查看：${groups[filter]}`;
+    const items=tab==='done'?done:open.filter(t=>filter===null||group(t)===filter);
+    $('.tm-list').replaceChildren(...(items.length ? items.map(t=>row(t,open[0]?.id===t.id)) : [elem('p','tm-empty',tab==='done'?'暂无已完成任务':filter!==null?'这个分组暂时没有任务':'暂时没有待办') ]));
+  }
+  function row(t,next) {
+    const article=elem('article','tm-row'); if(next) article.dataset.next='';
+    const line=elem('div','tm-line'), check=btn('tm-check'), title=btn('tm-task');
+    check.append(elem('span','','✓')); check.setAttribute('aria-pressed',String(t.done)); check.setAttribute('aria-label',`${t.done?'重新打开':'完成'}：${t.title}`);
+    check.addEventListener('click',()=>{
+      t.done=!t.done; t.completed=t.done?Date.now():null; if(expanded===t.id) expanded=null;
+      render(); announce(`${t.done?'已完成':'已重新打开'}：${t.title}`,t.done?t:null);
+      if(t.done) $('[data-undo]').focus(); else $(`[data-tab="${tab}"]`).focus();
+    });
+    const timing=t.due ? fmt.format(t.due)+' 截止' : '无截止时间';
+    const arrow=elem('span','tm-chevron','⌄'); arrow.setAttribute('aria-hidden','true');
+    title.append(elem('strong','',t.title),elem('span',`tm-meta${t.due&&t.due<now&&!t.done?' tm-late':''}`,[next?'建议先做':'',t.important?'重要':'',t.due&&t.due<now&&!t.done?'已逾期':'',timing].filter(Boolean).join(' · ')),arrow);
+    title.dataset.expand=t.id; title.setAttribute('aria-controls',`tm-detail-${t.id}`);
+    const fold=elem('div','tm-fold'); fold.id=`tm-detail-${t.id}`;
+    const wrapper=elem('div'), detail=elem('div','tm-detail'), edit=btn('tm-link','编辑');
+    edit.dataset.edit=t.id; edit.addEventListener('click',()=>openEditor(t));
+    detail.append(elem('p','',t.notes||'无备注'),edit); wrapper.append(detail); fold.append(wrapper);
+    setFold(title,fold,expanded===t.id);
+    title.addEventListener('click',()=>{
+      const opened=expanded===t.id;
+      if(expanded!==null && !opened){const old=$(`[data-expand="${expanded}"]`); if(old) setFold(old,$(`#tm-detail-${expanded}`),false);}
+      expanded=opened?null:t.id; setFold(title,fold,!opened);
+    });
+    line.append(check,title); article.append(line,fold); return article;
+  }
+  function setFold(button,panel,on) { button.setAttribute('aria-expanded',String(on)); panel.toggleAttribute('data-open',on); panel.inert=!on; }
+  function openEditor(t) {
+    editing=t; editor.elements.title.value=t.title; editor.elements.notes.value=t.notes; editor.elements.important.checked=t.important;
+    const date=t.due?new Date(t.due):null;
+    editor.elements.due.value=date ? new Date(date.getTime()-date.getTimezoneOffset()*60000).toISOString().slice(0,16):'';
+    dialog.showModal(); $('.tm-editor [data-close]').focus();
+  }
+  async function closeEditor(){
+    if(!dialog.open || dialog.hasAttribute('data-closing')) return;
+    dialog.setAttribute('data-closing','');
+    await Promise.allSettled(dialog.getAnimations().map(animation=>animation.finished));
+    dialog.close(); dialog.removeAttribute('data-closing');
+  }
+  all('[data-close]').forEach(b=>b.addEventListener('click',closeEditor));
+  dialog.addEventListener('cancel',e=>{e.preventDefault(); void closeEditor();});
+  dialog.addEventListener('close',()=>{ editing=null; });
+  editor.addEventListener('submit',async e=>{
+    e.preventDefault(); if(!editing || dialog.hasAttribute('data-closing')) return; const value=editor.elements.title.value.trim(); if(!value){editor.elements.title.focus();return;}
+    const id=editing.id; editing.title=value; editing.notes=editor.elements.notes.value.trim(); editing.important=editor.elements.important.checked; editing.due=editor.elements.due.value ? new Date(editor.elements.due.value).getTime():null;
+    await closeEditor(); render(); ($(`[data-expand="${id}"]`)||$(`[data-tab="${tab}"]`)).focus(); announce('已保存：'+value);
+  });
+  quick.addEventListener('submit',e=>{
+    e.preventDefault(); const value=quick.elements.quick.value.trim(); if(!value)return;
+    tasks.push({id:++seq,title:value,important:false,due:null,done:false,notes:''}); quick.reset(); render(); announce('已添加：'+value+(tab==='done'||(filter!==null&&filter!==3)?'（在全部待办中）':''));
+  });
+  all('[data-tab]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab; expanded=null; render(); storage();}));
+  $('[data-clear]').addEventListener('click',()=>{filter=null; render(); $('[data-tab="pending"]').focus(); storage();});
+  $('[data-undo]').addEventListener('click',()=>{if(!undo)return; const t=undo; t.done=false; t.completed=null; render(); ($(`[data-expand="${t.id}"]`)||$(`[data-tab="${tab}"]`)).focus(); announce('已撤销完成：'+t.title);});
+  const narrow=matchMedia('(max-width:595px)'); const setOverview=()=>{ $('.tm-overview details').open=!narrow.matches; }; setOverview(); narrow.addEventListener('change',setOverview);
+  render(); restore(window.openai?.widgetState?.privateContent); ready=true;
+  window.addEventListener('openai:set_globals', event=>restore(event.detail?.globals?.widgetState?.privateContent));
+  if(globalThis.Tweak){const setup={motion:1}; const tweak=new Tweak({container:$('.tm-app'),onChange:()=>$('.tm-app').style.setProperty('--speed',setup.motion)}); tweak.addSlider(setup,'motion',{label:'动效时长倍率',min:0,max:1.5,step:.25});}
+}
+</script>

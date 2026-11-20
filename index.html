@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f6f0">
+    <meta name="description" content="记录待办，按重要程度与截止时间决定下一件事。">
+    <title>先做哪件事 · 个人待办</title>
+  </head>
+  <body>
+    <header class="topbar"><div class="topbar-inner"><span class="brand"><span class="mark" aria-hidden="true">✓</span>先做哪件事</span><button id="sign-out" type="button" class="link" hidden>退出登录</button></div></header>
+    <main>
+      <section id="auth" class="auth wrap" aria-labelledby="auth-title" hidden></section>
+      <section id="dashboard" class="wrap dashboard" aria-labelledby="dashboard-title" hidden>
+        <header class="heading"><p class="kicker">我的清单</p><h1 id="dashboard-title">先做哪件事？</h1><p id="demo-note" class="demo" hidden>本地演示 · 仅保存在当前页面，刷新后重置。配置 Supabase 后可登录和跨设备同步。</p></header>
+        <div class="layout">
+          <section class="tasks" aria-label="任务清单">
+            <form id="quick" class="quick">
+              <div class="quick-row"><input name="title" aria-label="新任务标题" placeholder="记一件事…" maxlength="120" required><button type="submit" class="primary">＋ 添加</button></div>
+              <div class="quick-extras"><label class="chip"><input name="important" type="checkbox"> 重要</label><button type="button" id="quick-due-toggle" class="chip" aria-controls="quick-due" aria-expanded="false">截止时间</button></div>
+              <div id="quick-due" class="due-options" hidden><div><button type="button" class="chip" data-day="0">今天</button><button type="button" class="chip" data-day="1">明天</button><button type="button" class="link" data-day="clear">清除</button></div><input name="due" type="datetime-local" aria-label="具体截止时间"></div>
+              <p id="quick-error" class="error" role="alert" hidden></p>
+            </form>
+            <div class="tabs" role="group" aria-label="任务状态"><button type="button" data-view="pending" aria-pressed="true">待办 <span id="pending-count"></span></button><button type="button" data-view="done" aria-pressed="false">已完成 <span id="done-count"></span></button></div>
+            <div id="filter-bar" class="filter-bar" hidden><span id="filter-label"></span><button type="button" class="link" id="clear-filter">清除筛选</button></div>
+            <div id="load-state" class="load-state" hidden><p id="load-message" role="status"></p><button type="button" class="link" id="retry-load" hidden>重试</button></div>
+            <div id="lists"><div id="pending-list"></div><div id="done-list" hidden></div></div>
+          </section>
+          <aside class="overview" aria-labelledby="overview-title"><h2 id="overview-title">待办概览</h2><details id="overview" open><summary>待办概览 <span class="chevron" aria-hidden="true">⌄</span></summary><div class="chart"><div id="ring" aria-hidden="true"></div><div class="chart-total"><strong id="total">0</strong><span>件待办</span></div></div><div id="legend" class="legend"></div></details></aside>
+        </div>
+        <div id="notice" class="notice" hidden><p id="notice-text" role="status"></p><button type="button" id="notice-action" class="chip" hidden></button><button type="button" id="notice-close" class="link" aria-label="关闭提示">关闭</button></div>
+      </section>
+      <dialog id="editor" aria-labelledby="editor-title">
+        <form id="editor-form" class="editor-form">
+          <header><h2 id="editor-title">编辑任务</h2><button type="button" class="link" data-close-editor>关闭</button></header>
+          <label>任务名称<input name="title" maxlength="120" required></label>
+          <label class="choice"><input type="checkbox" name="important"> 标为重要</label>
+          <label>截止时间<input type="datetime-local" name="due"></label>
+          <label>备注<textarea name="notes" maxlength="2000" rows="4"></textarea></label>
+          <p id="editor-error" class="error" role="alert" hidden></p>
+          <footer><button type="button" class="danger" id="delete-task">删除任务</button><div><button type="button" data-close-editor>取消</button><button type="submit" class="primary">保存</button></div></footer>
+        </form>
+      </dialog>
+      <dialog id="confirm" aria-labelledby="confirm-title" aria-describedby="confirm-message"><form method="dialog" class="confirm-form"><h2 id="confirm-title"></h2><p id="confirm-message"></p><footer><button value="cancel" autofocus>取消</button><button id="confirm-action" value="confirm" class="danger">确认</button></footer></form></dialog>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
