@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f7f6f0">
     <meta name="description" content="记录待办，按重要程度与截止时间决定下一件事。">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="apple-touch-icon" href="./app-icon-192.png">
     <title>先做哪件事 · 个人待办</title>
   </head>
   <body>
@@ -12,6 +14,8 @@
     <main>
       <section id="auth" class="auth wrap" aria-labelledby="auth-title" hidden></section>
       <section id="dashboard" class="wrap dashboard" aria-labelledby="dashboard-title" hidden>
+        <nav id="app-nav" class="app-nav" aria-label="功能切换"><button type="button" id="todo-tab" aria-controls="todo-view" aria-pressed="true">待办</button><button type="button" id="course-tab" aria-controls="course-view" aria-pressed="false">课表</button></nav>
+        <div id="todo-view">
         <header class="heading"><p class="kicker">我的清单</p><h1 id="dashboard-title">先做哪件事？</h1><p id="demo-note" class="demo" hidden>本地演示 · 仅保存在当前页面，刷新后重置。配置 Supabase 后可登录和跨设备同步。</p></header>
         <div class="layout">
           <section class="tasks" aria-label="任务清单">
@@ -28,6 +32,37 @@
           </section>
           <aside class="overview" aria-labelledby="overview-title"><h2 id="overview-title">待办概览</h2><details id="overview" open><summary>待办概览 <span class="chevron" aria-hidden="true">⌄</span></summary><div class="chart"><div id="ring" aria-hidden="true"></div><div class="chart-total"><strong id="total">0</strong><span>件待办</span></div></div><div id="legend" class="legend"></div></details></aside>
         </div>
+        </div>
+        <section id="course-view" aria-labelledby="course-title" hidden>
+          <header class="heading"><p class="kicker">课程与提醒</p><h1 id="course-title">我的课表</h1></header>
+          <div class="course-card">
+            <div class="course-toolbar"><label>学期<select id="course-term"></select></label><button type="button" id="course-today" aria-pressed="true">今天</button><button type="button" id="course-week" aria-pressed="false">按周查看</button></div>
+            <div id="course-week-nav" class="course-toolbar" hidden><button type="button" id="course-prev">上一周</button><strong id="course-week-label"></strong><button type="button" id="course-next">下一周</button></div>
+            <p id="course-load" role="status"></p><ul id="course-list" class="course-list"></ul>
+            <details id="course-week-settings" hidden>
+              <summary id="course-week-summary">设置当前周</summary>
+              <form id="course-week-form">
+                <p>按北京时间校准本学期。保存后会调整课程日期和上课提醒，下周一自动进入下一周。</p>
+                <div class="course-toolbar"><label>本周是第几周<input id="course-current-week" type="number" min="1" max="30" step="1" required inputmode="numeric"></label><button type="submit" id="course-week-save" class="primary">保存当前周</button></div>
+              </form>
+            </details>
+            <p id="course-week-status" role="status"></p>
+          </div>
+          <details id="course-import" class="course-card"><summary>导入课表</summary>
+            <form id="course-form">
+              <label>学校导出的个人课表（.xls）<input type="file" id="course-file" accept=".xls,application/vnd.ms-excel" required></label>
+              <label>学校第 1 周周一<input type="date" id="course-start" required></label>
+              <p id="course-import-status" role="status"></p>
+              <div id="course-preview" hidden><div class="course-toolbar"><label>预览周次<select id="course-preview-week"></select></label></div><ul id="course-preview-list" class="course-list"></ul></div>
+              <button type="submit" id="course-save" class="primary" disabled>确认导入</button>
+            </form>
+          </details>
+          <details class="course-card"><summary>手机上课提醒</summary>
+            <p>每场课只在开课时提醒一次，不提醒智慧树或下课。iPhone 请先用 Safari 添加到主屏幕，再从桌面打开。</p>
+            <div class="course-toolbar"><button type="button" id="course-install">添加到手机桌面</button><button type="button" id="course-enable">开启本机提醒</button><button type="button" id="course-test">发送测试通知</button><button type="button" id="course-disable">关闭本机提醒</button></div>
+            <p id="course-push-state" role="status"></p>
+          </details>
+        </section>
         <div id="notice" class="notice" hidden><p id="notice-text" role="status"></p><button type="button" id="notice-action" class="chip" hidden></button><button type="button" id="notice-close" class="link" aria-label="关闭提示">关闭</button></div>
       </section>
       <dialog id="editor" aria-labelledby="editor-title">

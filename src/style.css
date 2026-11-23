@@ -103,6 +103,19 @@ label { display: grid; gap: 5px; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dot); }
 .legend-count { white-space: nowrap; color: var(--muted); }
 .dashboard { padding-bottom: 42px; }
+.app-nav, .course-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.app-nav { margin-block: 16px; }
+.app-nav button[aria-pressed=true], .course-toolbar button[aria-pressed=true] { background: var(--tint); color: var(--green); font-weight: 650; }
+.course-card { border: 1px solid var(--border); border-radius: 12px; padding: 13px; background: var(--surface); margin-block: 12px; overflow-wrap: anywhere; }
+.course-card summary { cursor: pointer; font-weight: 650; }
+.course-card form, .course-card[open] > :not(summary) { margin-top: 12px; }
+.course-card form { display: grid; gap: 10px; }
+.course-card select { padding: 8px; min-height: 42px; border: 1px solid var(--border); border-radius: 8px; font: inherit; color: inherit; background: var(--surface); }
+.course-list { list-style: none; padding: 0; margin: 10px 0 0; }
+.course-list:empty { margin: 0; }
+.course-list li { display: grid; gap: 3px; padding-block: 9px; border-top: 1px solid var(--border); }
+.course-list li span { color: var(--muted); font-size: .91rem; }
+#course-import-status { white-space: pre-line; }
 .notice { inset: auto max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)); position: fixed; z-index: 2; display: flex; align-items: center; flex-wrap: wrap; gap: 7px; width: max-content; max-width: min(640px, calc(100% - 28px)); margin-inline: auto; padding: 4px 10px 4px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--green); box-shadow: 0 8px 30px #14251b20; animation: note-in 150ms var(--ease); }
 .notice p { flex: 1 1 130px; overflow-wrap: anywhere; }
 .notice .chip { background: var(--tint); }
@@ -111,6 +124,14 @@ label { display: grid; gap: 5px; }
 .auth-card { display: grid; gap: 17px; padding: clamp(16px, 5vw, 29px); border: 1px solid var(--border); border-radius: 16px; background: var(--surface); }
 .auth-card h1 { font-size: clamp(24px, 6vw, 34px); }
 .auth-form { display: grid; gap: 12px; }
+.auth-password-field { display: grid; gap: 6px; }
+.auth-password-control { position: relative; }
+.auth-password-control input { padding-inline-end: 50px; }
+.auth-password-control input::-ms-reveal { display: none; }
+.auth-password-toggle { position: absolute; inset-block: 0; inset-inline-end: 0; display: grid; place-items: center; width: 44px; padding: 0; border: 0; background: transparent; color: var(--muted); }
+.auth-password-toggle:hover { color: var(--ink); }
+.auth-password-toggle svg { width: 20px; height: 20px; }
+.auth-password-control input[type=text] + button .auth-password-slash { visibility: hidden; }
 .auth-links { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .auth-message { padding: 8px 10px; background: var(--tint); color: var(--green); border-radius: 7px; }
 dialog { max-width: calc(100% - 24px); padding: 0; color: var(--ink); border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }

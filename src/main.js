@@ -1,5 +1,6 @@
 import './style.css';
 import { client, demo, cloudStore, memoryStore } from './store.js';
+import { createScheduleUI } from './schedule-ui.js';
 import { GROUPS, summarize, groupOf, isOverdue, isUrgent, fields, localInput, endOfDay } from './tasks.js';
 
 const $ = selector => document.querySelector(selector);
@@ -9,6 +10,7 @@ function button(text, className, action) { const node = el('button', text, class
 function message(node, text) { node.textContent = text; node.hidden = !text; }
 function readable(error, fallback) { return error instanceof Error && /[\u4e00-\u9fff]/u.test(error.message) ? error.message : fallback; }
 const auth = $('#auth'), dash = $('#dashboard'), quick = $('#quick'), editor = $('#editor'), editForm = $('#editor-form'), confirmDialog = $('#confirm');
+const courseUI = createScheduleUI(client);
 const fmt = new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 const shortFmt = new Intl.DateTimeFormat('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
 const formatDue = value => `${shortFmt.format(new Date(value))} 截止`;
@@ -24,15 +26,23 @@ const recoveryLink = requested === 'reset' || callbackHash.get('type') === 'reco
 const authLinkError = params.has('error') || callbackHash.has('error');
 let recovery = false, authMode = ['register', 'forgot'].includes(requested) ? requested : 'login';
 let awaitingRecovery = recoveryLink;
+let noticeTimer;
 
 function notice(text, label, action) {
+  clearTimeout(noticeTimer);
   bannerAction = action;
   $('#notice').hidden = !text;
   $('#notice-text').textContent = text;
   message($('#notice-action'), label ?? '');
+  if (text) noticeTimer = setTimeout(closeNotice, 2000);
+}
+function closeNotice() {
+  const hadFocus = $('#notice').contains(document.activeElement);
+  notice('');
+  if (hadFocus) $('.tabs button[aria-pressed="true"]')?.focus();
 }
 $('#notice-action').onclick = () => bannerAction?.();
-$('#notice-close').onclick = () => { notice(''); $('.tabs button[aria-pressed="true"]').focus(); };
+$('#notice-close').onclick = closeNotice;
 
 const legendButtons = GROUPS.map((label, index) => {
   const item = button('', '', () => { if (view === 'done') changeView('pending'); filter = filter === index ? null : index; render(); });
@@ -283,6 +293,7 @@ $('#delete-task').onclick = async () => {
 };
 
 function clearDashboard() {
+  courseUI.reset();
   store = null; userId = null; deck = []; view = 'pending'; filter = null; expanded = null; editing = null; editTrigger = null;
   hasLoaded = false; writeCount = 0; rowBusy.clear(); pendingScroll = 0; loadTicket++;
   if (confirmDialog.open) confirmDialog.close(); if (editor.open) editor.close();
@@ -295,6 +306,7 @@ function showDashboard(id) {
   if (store && userId === id) return;
   clearDashboard(); userId = id; store = demo ? memoryStore() : cloudStore(id);
   auth.hidden = true; auth.replaceChildren(); dash.hidden = false; $('#demo-note').hidden = !demo; $('#sign-out').hidden = demo;
+  courseUI.reset(demo ? undefined : id); courseUI.showFromNotification();
   render(); void load(true);
 }
 
@@ -315,9 +327,21 @@ function showAuth(mode, initialNotice = '') {
   const failure = el('p', null, 'error'); failure.setAttribute('role', 'alert'); failure.hidden = true;
   const form = el('form', null, 'auth-form');
   const addInput = (label, type, name, autocomplete) => {
-    const wrap = el('label', label), input = el('input'); input.type = type; input.name = name; input.autocomplete = autocomplete; input.required = true;
-    if (type === 'password' && mode !== 'login') input.minLength = 8;
-    wrap.append(input); form.append(wrap);
+    const caption = el('label', label), input = el('input'); input.type = type; input.name = name; input.autocomplete = autocomplete; input.required = true;
+    if (type !== 'password') { caption.append(input); form.append(caption); return; }
+
+    if (mode !== 'login') input.minLength = 8;
+    input.id = `auth-${name}`; caption.htmlFor = input.id;
+    const field = el('div', null, 'auth-password-field'), control = el('div', null, 'auth-password-control');
+    const toggle = button(null, 'auth-password-toggle', () => {
+      const visible = input.type === 'password';
+      input.type = visible ? 'text' : 'password';
+      toggle.setAttribute('aria-label', `${visible ? '隐藏' : '显示'}${name === 'repeat' ? '确认密码' : '密码'}`);
+    });
+    toggle.setAttribute('aria-label', name === 'repeat' ? '显示确认密码' : '显示密码');
+    toggle.setAttribute('aria-controls', input.id);
+    toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z"/><circle cx="12" cy="12" r="2.5"/><path class="auth-password-slash" d="m4 4 16 16"/></svg>';
+    control.append(input, toggle); field.append(caption, control); form.append(field);
   };
   if (mode !== 'reset') addInput('邮箱', 'email', 'email', 'email');
   if (mode !== 'forgot') addInput(mode === 'reset' ? '新密码（至少 8 个字符）' : mode === 'register' ? '密码（至少 8 个字符）' : '密码', 'password', 'password', mode === 'login' ? 'current-password' : 'new-password');
@@ -357,7 +381,7 @@ function showAuth(mode, initialNotice = '') {
 
 $('#sign-out').onclick = async () => {
   const control = $('#sign-out'); control.disabled = true;
-  try { const { error } = await client.auth.signOut({ scope: 'local' }); if (error) throw error; }
+  try { await courseUI.beforeSignOut(); const { error } = await client.auth.signOut({ scope: 'local' }); if (error) throw error; }
   catch { notice('退出登录失败，请重试。'); }
   finally { control.disabled = false; }
 };
