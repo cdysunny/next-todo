@@ -29,6 +29,21 @@ test('无法识别的课程注明单元格，不推测开始时间', () => {
   assert.ok(parseSchedule([[]]).errors.length);
 });
 
+test('缺地点的跨节课程导入一次，不会把下一门课的名称当成地点', () => {
+  const practice = '实践教学\n老师(讲师)\n21([周])[01-02-03-04节]';
+  const next = '专业英语\n老师(讲师)\n6([周])[01-02节]\n教学楼1322';
+  const { courses, errors } = parseSchedule([
+    ...grid.slice(0, 3),
+    ['1-2节(8:30-10:05)', `${practice}\n\n${next}`],
+    ['3-4节(10:20-11:55)', practice],
+  ]);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(courses.map(({title, week, periods, place, time}) => [title, week, periods, place, time]), [
+    ['专业英语', 6, '1-2', '教学楼1322', '08:30'],
+    ['实践教学', 21, '1-2-3-4', '地点待定', '08:30'],
+  ]);
+});
+
 test('只生成北京时间开课时间，校验第 1 周周一', () => {
   const [course] = dateCourses([{ week: 2, day: 3, time: '08:30' }], '2026-09-07');
   assert.equal(course.starts_at, '2026-09-16T00:30:00.000Z');

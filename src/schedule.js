@@ -24,14 +24,18 @@ export function parseSchedule(rows) {
 
   for (const { r, start, end } of blocks) for (let day = 1; day <= 7; day++) {
     const address = `${String.fromCharCode(65 + day)}${r + 1}`;
-    const lines = String(rows[r][day] ?? '').split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    const lines = String(rows[r][day] ?? '').split(/\r?\n/).map(s => s.trim());
     let pending = [];
     for (let i = 0; i < lines.length; i++) {
+      if (!lines[i]) continue;
       const match = lines[i].match(weekLine);
       if (!match) { pending.push(lines[i]); continue; }
       const [title, ...rest] = pending;
       const teacher = rest.at(-1)?.replace(/\([^()]*\)$/, '').trim();
-      const place = lines[++i];
+      const next = lines[i + 1];
+      // An empty line separates records. Do not consume the next course's title.
+      const hasPlace = next && !weekLine.test(next);
+      const place = hasPlace ? lines[++i] : '地点待定';
       const periods = match[2].split(/[-,]/).map(Number);
       const weeks = new Set();
       let valid = Boolean(title && teacher && place && !weekLine.test(place) && rest.slice(0, -1).every(s => /^\([^()]+\)$/.test(s)));
